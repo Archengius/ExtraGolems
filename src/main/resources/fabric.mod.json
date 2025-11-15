@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "extra_golems",
+	"version": "${version}",
+	"name": "Extra Golems",
+	"description": "Allows creation of Copper Golems that aid with various tasks other than item sorting",
+	"authors": [
+		"Me!"
+	],
+	"license": "CC0-1.0",
+	"icon": "assets/extra_golems/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"me.archengius.extra_golems.ExtraGolemsMod"
+		]
+	},
+	"mixins": [
+		"extra_golems.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

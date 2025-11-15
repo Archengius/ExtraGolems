@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "me.archengius.extra_golems.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnimalAccessor",
+    "CopperGolemMixin",
+    "ExperienceOrbAccessor",
+    "LivingEntityAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+	}
+}
