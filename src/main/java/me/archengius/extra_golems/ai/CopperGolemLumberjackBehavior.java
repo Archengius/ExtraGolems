@@ -18,6 +18,7 @@ import net.minecraft.world.entity.animal.coppergolem.CopperGolemState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -42,6 +43,16 @@ public class CopperGolemLumberjackBehavior extends CopperGolemBaseBehavior {
 
     private static boolean shouldDestroyBlockState(BlockState blockState) {
         return blockState.is(BlockTags.LOGS);
+    }
+
+    private static boolean isRequiredBlockStateForDestruction(BlockState blockState) {
+        if (blockState.is(BlockTags.LEAVES)) {
+            if (blockState.getBlock() instanceof LeavesBlock) {
+                return !blockState.getValue(LeavesBlock.PERSISTENT);
+            }
+            return true;
+        }
+        return false;
     }
 
     private static boolean shouldDestroyBlock(Level level, PathfinderMob mob, BlockPos blockPos, BlockState blockState, ItemStack itemStack) {
@@ -146,6 +157,7 @@ public class CopperGolemLumberjackBehavior extends CopperGolemBaseBehavior {
             Set<BlockPos> checkedBlockSet = new HashSet<>(MAX_BLOCKS_TO_DESTROY_PER_INTERACTION * 4);
             List<BlockPos> pendingBlockList = Lists.newArrayListWithCapacity(MAX_BLOCKS_TO_DESTROY_PER_INTERACTION);
             List<BlockPos> resultBlockList = Lists.newArrayListWithCapacity(MAX_BLOCKS_TO_DESTROY_PER_INTERACTION / 2);
+            boolean foundRequiredBlockState = false;
 
             pendingBlockList.add(sourceBlockPos);
             checkedBlockSet.add(sourceBlockPos);
@@ -167,10 +179,17 @@ public class CopperGolemLumberjackBehavior extends CopperGolemBaseBehavior {
                         }
                     }
                 }
+                if (isRequiredBlockStateForDestruction(currentBlockState)) {
+                    foundRequiredBlockState = true;
+                }
             }
 
-            resultBlockList.sort(Comparator.comparing(blockPos -> -blockPos.distSqr(sourceBlockPos)));
-            return resultBlockList;
+            if (foundRequiredBlockState) {
+                resultBlockList.sort(Comparator.comparing(blockPos -> -blockPos.distSqr(sourceBlockPos)));
+                return resultBlockList;
+            } else {
+                return ImmutableList.of();
+            }
         }
 
         @Override
