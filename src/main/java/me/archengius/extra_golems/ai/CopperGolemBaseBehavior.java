@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainerHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PathfinderMob;
@@ -337,6 +338,19 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
         }
     }
 
+    public static Container getBlockContainerAt(Level level, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, boolean allowWorldContainerHolders) {
+        if (allowWorldContainerHolders && blockState.getBlock() instanceof WorldlyContainerHolder worldlyContainerHolder) {
+            return worldlyContainerHolder.getContainer(blockState, level, blockPos);
+        }
+        if (blockEntity instanceof Container container) {
+            if (blockEntity instanceof ChestBlockEntity && blockState.getBlock() instanceof ChestBlock chestBlock) {
+                return ChestBlock.getContainer(chestBlock, blockState, level, blockPos, true);
+            }
+            return container;
+        }
+        return null;
+    }
+
     public Optional<BlockPos> findClosestContainerInteractionTarget(ServerLevel level, PathfinderMob mob, Predicate<BlockState> containerTypePredicate) {
         AABB containerSearchBoundingBox = getTargetSearchArea(mob);
         Set<GlobalPos> visitedPositions = getVisitedPositions(mob);
@@ -549,7 +563,8 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
             super.startTargetInteraction(level, mob);
 
             this.shouldPerformContainerBehavior = false;
-            if (this.blockEntity instanceof Container container) {
+            Container container = getBlockContainerAt(level, this.blockPos, this.blockState, this.blockEntity, true);
+            if (container != null) {
                 this.shouldPerformContainerBehavior = checkContainerBehavior(level, mob, container);
             }
         }
@@ -558,7 +573,8 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
         public void tickTargetInteraction(Level level, PathfinderMob mob, int ticksSinceInteractionStart) {
             super.tickTargetInteraction(level, mob, ticksSinceInteractionStart);
 
-            if (mob instanceof CopperGolem copperGolem && this.blockEntity instanceof Container container) {
+            Container container = getBlockContainerAt(level, this.blockPos, this.blockState, this.blockEntity, true);
+            if (mob instanceof CopperGolem copperGolem && container != null) {
                 if (ticksSinceInteractionStart == TICK_TO_START_ON_REACHED_INTERACTION) {
                     container.startOpen(copperGolem);
                     copperGolem.setOpenedChestPos(this.blockPos);
@@ -575,7 +591,8 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
 
         @Override
         public void finishTargetInteraction(Level level, PathfinderMob mob) {
-            if (mob instanceof CopperGolem copperGolem && this.blockEntity instanceof Container container) {
+            Container container = getBlockContainerAt(level, this.blockPos, this.blockState, this.blockEntity, true);
+            if (mob instanceof CopperGolem copperGolem && container != null) {
                 if (container.getEntitiesWithContainerOpen().contains(mob)) {
                     container.stopOpen(copperGolem);
                 }
@@ -583,7 +600,7 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
             }
 
             boolean completedTargetBehavior = false;
-            if (this.shouldPerformContainerBehavior && this.blockEntity instanceof Container container) {
+            if (this.shouldPerformContainerBehavior && container != null) {
                 completedTargetBehavior = performContainerBehavior(level, mob, container);
             }
             if (completedTargetBehavior) {
@@ -595,7 +612,8 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
 
         @Override
         public boolean isTargetStillAvailableAndRelevant(Level level, PathfinderMob mob) {
-            return super.isTargetStillAvailableAndRelevant(level, mob) && !(this.blockState.getBlock() instanceof ChestBlock && ChestBlock.isChestBlockedAt(level, this.blockPos));
+            return super.isTargetStillAvailableAndRelevant(level, mob) &&
+                    !(this.blockState.getBlock() instanceof ChestBlock && ChestBlock.isChestBlockedAt(level, this.blockPos));
         }
 
         @Override
@@ -612,17 +630,15 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
 
         @Override
         public boolean isTargetCurrentlyOccupied(Level level) {
-            if (this.blockState.getBlock() instanceof ChestBlock) {
-                if (this.blockEntity instanceof ChestBlockEntity chestBlockEntity && !chestBlockEntity.getEntitiesWithContainerOpen().isEmpty()) {
-                    return true;
-                }
+            Container container = getBlockContainerAt(level, this.blockPos, this.blockState, this.blockEntity, true);
+            if (container instanceof ChestBlockEntity && this.blockState.getBlock() instanceof ChestBlock) {
                 BlockPos connectedBlockPos = ChestBlock.getConnectedBlockPos(this.blockPos, this.blockState);
                 BlockEntity connectedBlockEntity = level.getBlockEntity(connectedBlockPos);
                 if (connectedBlockEntity instanceof ChestBlockEntity connectedChestBlockEntity && !connectedChestBlockEntity.getEntitiesWithContainerOpen().isEmpty()) {
                     return true;
                 }
             }
-            return super.isTargetCurrentlyOccupied(level);
+            return container != null && !container.getEntitiesWithContainerOpen().isEmpty();
         }
     }
 
