@@ -98,6 +98,7 @@ public class ExtraGolemsUtil {
                 setCopperGolemType(entity, newCopperGolemType.get());
                 entity.playSound(SoundEvents.ITEM_PICKUP, 0.3f, 1.0f);
                 entity.setItemSlot(CopperGolem.EQUIPMENT_SLOT_ANTENNA, itemInHand.copyWithCount(1));
+                entity.setGuaranteedDrop(CopperGolem.EQUIPMENT_SLOT_ANTENNA);
                 itemInHand.consume(1, player);
                 return InteractionResult.SUCCESS_SERVER;
             }

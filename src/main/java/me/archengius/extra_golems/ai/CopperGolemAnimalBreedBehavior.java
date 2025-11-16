@@ -23,8 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class
-CopperGolemAnimalBreedBehavior extends CopperGolemBaseBehavior {
+public class CopperGolemAnimalBreedBehavior extends CopperGolemBaseBehavior {
     private static final double BREEDING_PARTNER_SEARCH_RANGE = 8.0f;
     private static final int PREFERRED_BREEDING_PARTNER_MEMORY_TIME = 500;
     private static final TargetingConditions BREEDING_PARTNER_TARGETING = TargetingConditions.forNonCombat().range(BREEDING_PARTNER_SEARCH_RANGE).ignoreLineOfSight();

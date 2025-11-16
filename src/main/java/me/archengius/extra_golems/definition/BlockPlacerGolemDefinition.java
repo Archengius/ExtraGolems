@@ -12,6 +12,6 @@ public class BlockPlacerGolemDefinition extends GolemDefinitionWithItemFilter {
                 CopperGolemBlockPlacementBehavior.AnyBlock::new,
                 CopperGolemBlockPlacementBehavior.MEMORY_TYPES,
                 CopperGolemBlockPlacementBehavior.AnyBlock::isValidItemToHold,
-                CopperGolemBlockPlacementBehavior.MAX_PLACED_BLOCK_STACK_SIZE);
+                CopperGolemBlockPlacementBehavior.MAX_HELD_ITEM_STACK_SIZE);
     }
 }

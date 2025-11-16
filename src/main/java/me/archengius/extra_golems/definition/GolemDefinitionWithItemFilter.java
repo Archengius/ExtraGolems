@@ -51,6 +51,7 @@ public class GolemDefinitionWithItemFilter extends SimpleGolemDefinition {
                     }
                     itemInPlayerHand.consume(itemAmountToTake, player);
                     copperGolem.setItemSlot(EquipmentSlot.MAINHAND, itemInGolemHandCopy);
+                    copperGolem.setGuaranteedDrop(EquipmentSlot.MAINHAND);
                     copperGolem.playSound(SoundEvents.ITEM_PICKUP, 0.2f, 2.0f);
                     notifyPlayerGaveItemToGolem(copperGolem, player, itemInGolemHandCopy);
                     return InteractionResult.SUCCESS_SERVER;

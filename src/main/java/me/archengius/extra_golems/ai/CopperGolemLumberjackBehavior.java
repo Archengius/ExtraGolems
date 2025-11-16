@@ -238,7 +238,7 @@ public class CopperGolemLumberjackBehavior extends CopperGolemBaseBehavior {
 
                     this.currentlyBreakingBlockIndex = newBlockIndex;
                     this.currentBreakingBlockState = newBlockState;
-                    this.currentBreakingItemStack = itemStack;
+                    this.currentBreakingItemStack = itemStack.copy();
                     this.blockDestroyStartTicks = ticksSinceInteractionStart;
                 } else {
                     this.lastDestroyedBlockIndex = newBlockIndex;

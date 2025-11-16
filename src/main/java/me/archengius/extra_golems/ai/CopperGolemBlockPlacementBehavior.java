@@ -32,11 +32,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class CopperGolemBlockPlacementBehavior extends CopperGolemBaseBehavior {
+public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseBehavior {
     public static final float BLOCK_PLACEMENT_SPEED_MODIFIER = 1.0f;
     public static final int BLOCK_PLACEMENT_HORIZONTAL_SEARCH_RADIUS = 16;
     public static final int BLOCK_PLACEMENT_VERTICAL_SEARCH_RADIUS = 2;
-    public static final int MAX_PLACED_BLOCK_STACK_SIZE = 16;
+    public static final int MAX_HELD_ITEM_STACK_SIZE = 16;
     public static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of();
 
     private final Predicate<ItemStack> validBlockForPlacementPredicate;
@@ -133,7 +133,7 @@ public class CopperGolemBlockPlacementBehavior extends CopperGolemBaseBehavior {
 
         public PickupBlockToPlaceInteractionTarget(CopperGolemBlockPlacementBehavior owner, Level level, BlockPos blockPos) {
             super(owner, level, blockPos);
-            this.transportedItemMaxStackSize = MAX_PLACED_BLOCK_STACK_SIZE;
+            this.transportedItemMaxStackSize = MAX_HELD_ITEM_STACK_SIZE;
         }
 
         @Override
@@ -146,7 +146,7 @@ public class CopperGolemBlockPlacementBehavior extends CopperGolemBaseBehavior {
         private static final int BLOCK_PLACEMENT_INTERACTION_TIME = 40;
         private static final int TICK_TO_START_INTERACTION_ANIMATION = 1;
         private static final int TICK_TO_PLAY_INTERACTION_SOUND = 9;
-        private static final float BLOCK_PLACEMENT_INTERACTION_RANGE = 1.0f;
+        private static final float BLOCK_PLACEMENT_INTERACTION_RANGE = 0.5f;
 
         private final BlockPlacementTarget blockPlacementTarget;
         private boolean shouldAttemptBlockPlacement = false;

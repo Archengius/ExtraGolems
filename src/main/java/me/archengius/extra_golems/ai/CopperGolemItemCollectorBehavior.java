@@ -84,7 +84,8 @@ public class CopperGolemItemCollectorBehavior extends CopperGolemBaseBehavior {
 
         @Override
         protected boolean shouldDropItemIntoContainer(Level level, PathfinderMob mob, Container container, ItemStack itemStack) {
-            return containerContainsSameItemType(container, itemStack);
+            boolean isHoldingWildcardItem = mob.getBrain().getMemory(ExtraGolemsMemoryModuleTypes.PICKED_UP_WILDCARD_ITEM).isPresent();
+            return isHoldingWildcardItem || containerContainsSameItemType(container, itemStack);
         }
     }
 
@@ -153,6 +154,7 @@ public class CopperGolemItemCollectorBehavior extends CopperGolemBaseBehavior {
                 mob.getBrain().setMemory(ExtraGolemsMemoryModuleTypes.PICKED_UP_WILDCARD_ITEM, Optional.of(Unit.INSTANCE));
             }
             mob.setItemSlot(EquipmentSlot.MAINHAND, currentItemStack);
+            mob.setGuaranteedDrop(EquipmentSlot.MAINHAND);
             if (collectedAnyItemEntities) {
                 mob.playSound(SoundEvents.ITEM_PICKUP, 0.2f, 2.0f + (mob.getRandom().nextFloat() - mob.getRandom().nextFloat()) * 1.4f);
             }

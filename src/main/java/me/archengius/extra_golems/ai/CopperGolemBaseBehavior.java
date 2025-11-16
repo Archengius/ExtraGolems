@@ -523,7 +523,7 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
             Vec3 blockCenterPosition = this.blockPos.getCenter();
             return Direction.stream().map((direction) -> blockCenterPosition.add(direction.getUnitVec3().scale(0.5f)))
                     .map((resultPosition) -> level.clip(new ClipContext(position, resultPosition, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob)))
-                    .anyMatch((blockHitResult) -> blockHitResult.getType() == HitResult.Type.BLOCK && blockHitResult.getBlockPos().equals(blockPos));
+                    .anyMatch((blockHitResult) -> blockHitResult.getType() == HitResult.Type.MISS || (blockHitResult.getType() == HitResult.Type.BLOCK && blockHitResult.getBlockPos().equals(blockPos)));
         }
     }
 

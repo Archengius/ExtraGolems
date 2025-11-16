@@ -32,8 +32,12 @@ public class CopperGolemDefinitions {
             ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "lumberjack"), new LumberjackGolemDefinition());
     public static final GolemDefinition PLANTER = Registry.register(REGISTRY,
             ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "planter"), new PlanterGolemDefinition());
+    public static final GolemDefinition HARVESTER = Registry.register(REGISTRY,
+            ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "harvester"), new HarvesterGolemDefinition());
     public static final GolemDefinition BLOCK_PLACER = Registry.register(REGISTRY,
             ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "block_placer"), new BlockPlacerGolemDefinition());
+    public static final GolemDefinition BLOCK_BREAKER = Registry.register(REGISTRY,
+            ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "block_breaker"), new BlockBreakerGolemDefinition());
 
     public static void register() {
     }
