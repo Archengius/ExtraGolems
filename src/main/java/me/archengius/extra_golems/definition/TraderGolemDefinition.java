@@ -1,11 +1,10 @@
 package me.archengius.extra_golems.definition;
 
-import me.archengius.extra_golems.ExtraGolemsMemoryModuleTypes;
+import me.archengius.extra_golems.ai.ExtraGolemsMemoryModuleTypes;
 import me.archengius.extra_golems.ai.CopperGolemTraderBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.animal.coppergolem.CopperGolem;
 import net.minecraft.world.entity.player.Player;

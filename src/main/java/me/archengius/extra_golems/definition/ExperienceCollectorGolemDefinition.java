@@ -1,6 +1,6 @@
 package me.archengius.extra_golems.definition;
 
-import me.archengius.extra_golems.ExtraGolemsMemoryModuleTypes;
+import me.archengius.extra_golems.ai.ExtraGolemsMemoryModuleTypes;
 import me.archengius.extra_golems.ai.CopperGolemExperienceCollectorBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;

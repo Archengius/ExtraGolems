@@ -2,7 +2,6 @@ package me.archengius.extra_golems.ai;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import me.archengius.extra_golems.ExtraGolemsMemoryModuleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -33,6 +32,8 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -484,7 +485,8 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
 
         @Override
         public AABB getTargetBoundingBox(Level level) {
-            return level.getBlockState(this.blockPos).getCollisionShape(level, this.blockPos).bounds().move(this.blockPos);
+            VoxelShape targetBlockShape = level.getBlockState(this.blockPos).getCollisionShape(level, this.blockPos);
+            return (targetBlockShape.isEmpty() ? Shapes.block() : targetBlockShape).bounds().move(this.blockPos);
         }
 
         @Override
@@ -630,7 +632,7 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
 
         public ContainerPickupInteractionTarget(CopperGolemBaseBehavior owner, Level level, BlockPos blockPos) {
             super(owner, level, blockPos);
-            transportedItemMaxStackSize = DEFAULT_TRANSPORTED_ITEM_MAX_STACK_SIZE;
+            this.transportedItemMaxStackSize = DEFAULT_TRANSPORTED_ITEM_MAX_STACK_SIZE;
         }
 
         protected int getMaxTransportedItemStackSize(ItemStack itemStack) {

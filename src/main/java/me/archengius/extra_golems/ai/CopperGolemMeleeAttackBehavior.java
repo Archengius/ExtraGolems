@@ -1,7 +1,6 @@
 package me.archengius.extra_golems.ai;
 
 import com.google.common.collect.ImmutableList;
-import me.archengius.extra_golems.ExtraGolemsMemoryModuleTypes;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;

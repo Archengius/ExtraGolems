@@ -1,9 +1,11 @@
-package me.archengius.extra_golems;
+package me.archengius.extra_golems.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
+import me.archengius.extra_golems.definition.CopperGolemDefinitions;
+import me.archengius.extra_golems.ExtraGolemsMod;
 import me.archengius.extra_golems.ai.ExtraGolemsCopperGolemAi;
 import me.archengius.extra_golems.definition.GolemDefinition;
 import me.archengius.extra_golems.mixin.LivingEntityAccessor;

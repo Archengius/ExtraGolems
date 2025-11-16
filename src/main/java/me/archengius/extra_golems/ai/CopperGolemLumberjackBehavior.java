@@ -2,7 +2,7 @@ package me.archengius.extra_golems.ai;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import me.archengius.extra_golems.ExtraGolemsUtil;
+import me.archengius.extra_golems.util.ExtraGolemsUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Vec3i;

@@ -1,5 +1,7 @@
 package me.archengius.extra_golems;
 
+import me.archengius.extra_golems.ai.ExtraGolemsMemoryModuleTypes;
+import me.archengius.extra_golems.definition.CopperGolemDefinitions;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;

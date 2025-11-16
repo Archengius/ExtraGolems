@@ -1,7 +1,7 @@
-package me.archengius.extra_golems;
+package me.archengius.extra_golems.definition;
 
 import com.mojang.serialization.Lifecycle;
-import me.archengius.extra_golems.definition.*;
+import me.archengius.extra_golems.ExtraGolemsMod;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,6 +30,10 @@ public class CopperGolemDefinitions {
             ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "item_collector"), new ItemCollectorGolemDefinition());
     public static final GolemDefinition LUMBERJACK = Registry.register(REGISTRY,
             ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "lumberjack"), new LumberjackGolemDefinition());
+    public static final GolemDefinition PLANTER = Registry.register(REGISTRY,
+            ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "planter"), new PlanterGolemDefinition());
+    public static final GolemDefinition BLOCK_PLACER = Registry.register(REGISTRY,
+            ResourceLocation.fromNamespaceAndPath(ExtraGolemsMod.MOD_ID, "block_placer"), new BlockPlacerGolemDefinition());
 
     public static void register() {
     }

@@ -1,6 +1,6 @@
 package me.archengius.extra_golems.definition;
 
-import me.archengius.extra_golems.ExtraGolemsMemoryModuleTypes;
+import me.archengius.extra_golems.ai.ExtraGolemsMemoryModuleTypes;
 import me.archengius.extra_golems.ai.CopperGolemItemCollectorBehavior;
 import net.minecraft.world.entity.animal.coppergolem.CopperGolem;
 import net.minecraft.world.entity.player.Player;

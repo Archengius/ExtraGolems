@@ -1,7 +1,6 @@
 package me.archengius.extra_golems.ai;
 
 import com.google.common.collect.ImmutableList;
-import me.archengius.extra_golems.ExtraGolemsMemoryModuleTypes;
 import me.archengius.extra_golems.mixin.ExperienceOrbAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
