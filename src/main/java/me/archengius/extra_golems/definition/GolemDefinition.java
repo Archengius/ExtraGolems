@@ -5,6 +5,7 @@ import me.archengius.extra_golems.ai.CopperGolemBaseBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.coppergolem.CopperGolem;
 import net.minecraft.world.entity.player.Player;
@@ -41,5 +42,8 @@ public interface GolemDefinition {
 
     default InteractionResult mobInteract(CopperGolem copperGolem, Player player, InteractionHand interactionHand) {
         return InteractionResult.PASS;
+    }
+
+    default void actuallyHurt(CopperGolem copperGolem, ServerLevel level, DamageSource damageSource, float amount) {
     }
 }

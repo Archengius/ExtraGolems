@@ -9,6 +9,7 @@ import me.archengius.extra_golems.definition.GolemDefinition;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
@@ -118,6 +119,13 @@ public abstract class CopperGolemMixin extends Mob {
             Optional<GolemDefinition> golemDefinition = ExtraGolemsUtil.getCopperGolemType(golem);
             golemDefinition.ifPresent(definition -> definition.tick(golem));
         }
+    }
+
+    @Inject(at = @At("TAIL"), method = "actuallyHurt")
+    private void handleActuallyHurt(ServerLevel level, DamageSource damageSource, float amount, CallbackInfo callbackInfo) {
+        CopperGolem golem = ((CopperGolem) (Object) this);
+        Optional<GolemDefinition> golemDefinition = ExtraGolemsUtil.getCopperGolemType(golem);
+        golemDefinition.ifPresent(definition -> definition.actuallyHurt(golem, level, damageSource, amount));
     }
 
     @Inject(at = @At("HEAD"), method = "dropEquipment")

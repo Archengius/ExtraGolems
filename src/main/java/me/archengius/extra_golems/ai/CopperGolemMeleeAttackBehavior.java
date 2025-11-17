@@ -26,6 +26,7 @@ import java.util.UUID;
 public abstract class CopperGolemMeleeAttackBehavior extends CopperGolemBaseBehavior {
     private static final int MELEE_ATTACK_HORIZONTAL_SEARCH_RADIUS = 16;
     private static final int LAST_ATTACKED_ENTITY_MEMORY_TIME = 100;
+    public static final int ANGER_LAST_ATTACKED_ENTITY_MEMORY_TYPE = 600;
     public static final int MAX_HELD_ITEM_STACK_SIZE = 1;
     public static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(ExtraGolemsMemoryModuleTypes.LAST_ATTACKED_TARGET);
 
@@ -100,9 +101,10 @@ public abstract class CopperGolemMeleeAttackBehavior extends CopperGolemBaseBeha
     }
 
     private static class MeleeAttackEntityInteractionTarget extends BaseEntityInteractionTarget {
-        private static final int MELEE_ATTACK_ENTITY_INTERACTION_TIME = 40;
+        private static final int MELEE_ATTACK_ENTITY_INTERACTION_TIME = 20;
         private static final int SWING_ANIMATION_TICK_NUMBER = 1;
         private static final int ATTACK_ENTITY_TICK_NUMBER = 10;
+        private static final float MELEE_ATTACK_RANGE = 0.7f;
 
         private boolean attackedEntitySuccessfully = false;
 
@@ -113,6 +115,11 @@ public abstract class CopperGolemMeleeAttackBehavior extends CopperGolemBaseBeha
         @Override
         public int getTargetInteractionTime(Level level, PathfinderMob mob) {
             return MELEE_ATTACK_ENTITY_INTERACTION_TIME;
+        }
+
+        @Override
+        public AABB getTargetBoundingBox(Level level) {
+            return super.getTargetBoundingBox(level).inflate(MELEE_ATTACK_RANGE);
         }
 
         @Override
@@ -148,6 +155,14 @@ public abstract class CopperGolemMeleeAttackBehavior extends CopperGolemBaseBeha
         }
 
         @Override
+        public void cancelTargetInteraction(Level level, PathfinderMob mob, int ticksSinceInteractionStart) {
+            // If the interaction has been cancelled after we have already hit the entity, we do not need to attempt to continue it
+            if (ticksSinceInteractionStart >= ATTACK_ENTITY_TICK_NUMBER) {
+                finishTargetInteraction(level, mob);
+            }
+        }
+
+        @Override
         public void finishTargetInteraction(Level level, PathfinderMob mob) {
             if (this.attackedEntitySuccessfully) {
                 this.owner.clearMemoriesAfterMatchingTargetFound(mob);
@@ -161,10 +176,10 @@ public abstract class CopperGolemMeleeAttackBehavior extends CopperGolemBaseBeha
     }
 
     public static final class AdultAnimalAttackBehavior extends CopperGolemMeleeAttackBehavior {
-        private static final float ENEMY_MOB_ATTACK_SPEED_MULTIPLIER = 1.0f;
+        private static final float ANIMAL_ATTACK_SPEED_MULTIPLIER = 1.0f;
 
         public AdultAnimalAttackBehavior() {
-            super(ENEMY_MOB_ATTACK_SPEED_MULTIPLIER, MELEE_ATTACK_HORIZONTAL_SEARCH_RADIUS, ExtraGolemsCopperGolemAi.TRANSPORT_ITEM_VERTICAL_SEARCH_RADIUS);
+            super(ANIMAL_ATTACK_SPEED_MULTIPLIER, MELEE_ATTACK_HORIZONTAL_SEARCH_RADIUS, ExtraGolemsCopperGolemAi.TRANSPORT_ITEM_VERTICAL_SEARCH_RADIUS);
         }
 
         @Override
@@ -174,7 +189,7 @@ public abstract class CopperGolemMeleeAttackBehavior extends CopperGolemBaseBeha
     }
 
     public static final class EnemyMobAttackBehavior extends CopperGolemMeleeAttackBehavior {
-        private static final float ENEMY_MOB_ATTACK_SPEED_MULTIPLIER = 1.0f;
+        private static final float ENEMY_MOB_ATTACK_SPEED_MULTIPLIER = 2.0f;
 
         public EnemyMobAttackBehavior() {
             super(ENEMY_MOB_ATTACK_SPEED_MULTIPLIER, MELEE_ATTACK_HORIZONTAL_SEARCH_RADIUS, ExtraGolemsCopperGolemAi.TRANSPORT_ITEM_VERTICAL_SEARCH_RADIUS);

@@ -132,10 +132,10 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
 
             if (this.state == CurrentTaskState.INTERACTING) {
                 if (!isWithinTargetDistance(CLOSE_ENOUGH_TO_CONTINUE_INTERACTING_WITH_TARGET, level, mob)) {
+                    this.target.cancelTargetInteraction(level, mob, this.ticksSinceReachingTarget);
                     resetInteractionEffects(mob);
                     this.state = CurrentTaskState.TRAVELLING;
                     this.ticksSinceReachingTarget = 0;
-                    this.target.cancelTargetInteraction(level, mob);
                 } else {
                     ++this.ticksSinceReachingTarget;
                     mob.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, this.target.getTargetPositionTracker());
@@ -416,7 +416,7 @@ public abstract class CopperGolemBaseBehavior extends Behavior<PathfinderMob> {
         }
         default void startTargetInteraction(Level level, PathfinderMob mob) {
         }
-        default void cancelTargetInteraction(Level level, PathfinderMob mob) {
+        default void cancelTargetInteraction(Level level, PathfinderMob mob, int ticksSinceInteractionStart) {
         }
         default void tickTargetInteraction(Level level, PathfinderMob mob, int ticksSinceInteractionStart) {
         }

@@ -209,8 +209,8 @@ public abstract class CopperGolemBlockBreakBehavior extends CopperGolemBaseBehav
         }
 
         @Override
-        public void cancelTargetInteraction(Level level, PathfinderMob mob) {
-            super.cancelTargetInteraction(level, mob);
+        public void cancelTargetInteraction(Level level, PathfinderMob mob, int ticksSinceInteractionStart) {
+            super.cancelTargetInteraction(level, mob, ticksSinceInteractionStart);
             updateBlockBreakVisualProgress(level, mob, -1);
         }
 
