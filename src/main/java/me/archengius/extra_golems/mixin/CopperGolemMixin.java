@@ -2,18 +2,23 @@ package me.archengius.extra_golems.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.serialization.Dynamic;
+import me.archengius.extra_golems.ai.CopperGolemPathNavigation;
 import me.archengius.extra_golems.util.ExtraGolemsUtil;
 import me.archengius.extra_golems.ai.CopperGolemHealthRegeneration;
 import me.archengius.extra_golems.definition.GolemDefinition;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.coppergolem.CopperGolem;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,9 +29,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 @Mixin(CopperGolem.class)
-public abstract class CopperGolemMixin {
+public abstract class CopperGolemMixin extends Mob {
+
+    protected CopperGolemMixin(EntityType<? extends Mob> entityType, Level level) {
+        super(entityType, level);
+        throw new AssertionError();
+    }
 
     @Unique private CopperGolemHealthRegeneration extra_golems$healthRegeneration;
+
+    /// This is a necessary override of the default navigation to avoid copper golems from walking through blocks that are unsafe for them
+    /// Most notable example of this are saplings, which when grow can suffocate golems, which can happen to be around or inside of them normally
+    /// due to performing their designated tasks (e.g. harvesters and planters)
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new CopperGolemPathNavigation(this, level);
+    }
 
     @Inject(at = @At("HEAD"), method = "makeBrain", cancellable = true)
     private void handleMakeBrain(Dynamic<?> dynamic, CallbackInfoReturnable<Brain<CopperGolem>> callbackInfo) {
