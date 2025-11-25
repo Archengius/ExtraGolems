@@ -73,9 +73,7 @@ public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseB
         return placeFromBlockFace.getOpposite().getUnitVec3();
     }
 
-    protected boolean isMarkerBlockState(BlockState blockState) {
-        return blockState.is(BlockTags.COPPER);
-    }
+    protected abstract boolean isMarkerBlockState(BlockState blockState);
 
     protected Optional<BlockPlacementTarget> getBlockPlacementTarget(Level level, PathfinderMob mob, BlockPos markerBlockPos) {
         Direction placeFromBlockFace = Direction.UP;
@@ -109,7 +107,7 @@ public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseB
 
         for (BlockPos markerBlockPos : BlockPos.betweenClosed(targetSearchBoundingBox)) {
             BlockState markerBlockState = level.getBlockState(markerBlockPos);
-            if (isMarkerBlockState(markerBlockState) && markerBlockPos.distToCenterSqr(entityPosition) < closestMarkerBlockPosDistanceSq) {
+            if (!markerBlockState.isAir() && isMarkerBlockState(markerBlockState) && markerBlockPos.distToCenterSqr(entityPosition) < closestMarkerBlockPosDistanceSq) {
                 Optional<BlockPlacementTarget> placementTarget = getBlockPlacementTarget(level, mob, new BlockPos(markerBlockPos));
                 if (placementTarget.isPresent() && checkBlockPlacementTarget(level, mob, placementTarget.get())) {
                     GlobalPos globalPos = new GlobalPos(level.dimension(), placementTarget.get().placeFromBlockPos());
@@ -169,14 +167,14 @@ public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseB
                     ((CopperGolemBlockPlacementBehavior) this.owner).checkBlockPlacementTarget(level, mob, this.blockPlacementTarget);
         }
 
-        protected BlockPlaceContext createBlockPlacementContext(PathfinderMob mob) {
+        protected static BlockPlaceContext createBlockPlacementContext(PathfinderMob mob, BlockPlacementTarget blockPlacementTarget) {
             ItemStack itemStack = mob.getItemBySlot(EquipmentSlot.MAINHAND);
-            return new EntityBlockPlaceContext(mob, this.blockPlacementTarget.placeFromBlockPos(), this.blockPlacementTarget.placeFromBlockFace(), itemStack,
-                    this.blockPlacementTarget.replaceClickedBlock(), false);
+            return new EntityBlockPlaceContext(mob, blockPlacementTarget.placeFromBlockPos(), blockPlacementTarget.placeFromBlockFace(), itemStack,
+                    blockPlacementTarget.replaceClickedBlock(), false);
         }
 
         protected boolean checkCanPlaceBlock(PathfinderMob mob) {
-            BlockPlaceContext blockPlaceContext = createBlockPlacementContext(mob);
+            BlockPlaceContext blockPlaceContext = createBlockPlacementContext(mob, this.blockPlacementTarget);
             if (blockPlaceContext.getItemInHand().getItem() instanceof BlockItem blockItem) {
                 BlockPlaceContext updatedPlaceContext = blockItem.updatePlacementContext(blockPlaceContext);
                 if (updatedPlaceContext != null && updatedPlaceContext.canPlace()) {
@@ -188,7 +186,7 @@ public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseB
         }
 
         protected boolean placeBlock(PathfinderMob mob) {
-            BlockPlaceContext blockPlaceContext = createBlockPlacementContext(mob);
+            BlockPlaceContext blockPlaceContext = createBlockPlacementContext(mob, this.blockPlacementTarget);
             if (blockPlaceContext.getItemInHand().getItem() instanceof BlockItem blockItem) {
                 return blockItem.place(blockPlaceContext) != InteractionResult.FAIL;
             }
@@ -242,6 +240,11 @@ public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseB
         public static boolean isValidItemToHold(ItemStack itemStack) {
             return canPlaceItemStackAsBlock(itemStack);
         }
+
+        @Override
+        protected boolean isMarkerBlockState(BlockState blockState) {
+            return blockState.is(BlockTags.COPPER);
+        }
     }
 
     public static class VegetationBlock extends CopperGolemBlockPlacementBehavior {
@@ -262,16 +265,28 @@ public abstract class CopperGolemBlockPlacementBehavior extends CopperGolemBaseB
         }
 
         @Override
-        protected Vec3 getMarkerBlockSearchAreaOffset(Level level, PathfinderMob mob) {
-            Direction placeFromBlockFace = Direction.UP;
-            return placeFromBlockFace.getOpposite().getUnitVec3().scale(2.0f);
+        protected boolean isMarkerBlockState(BlockState blockState) {
+            return !blockState.isAir();
         }
 
         @Override
         protected Optional<BlockPlacementTarget> getBlockPlacementTarget(Level level, PathfinderMob mob, BlockPos markerBlockPos) {
             Direction placeFromBlockFace = Direction.UP;
-            BlockPos placementSourceBlockPos = markerBlockPos.above();
-            return Optional.of(new BlockPlacementTarget(placementSourceBlockPos, placeFromBlockFace, false));
+
+            ItemStack handItemStack = mob.getItemBySlot(EquipmentSlot.MAINHAND);
+            if (handItemStack.getItem() instanceof BlockItem blockItem) {
+
+                BlockPos placementBlockPos = markerBlockPos.relative(placeFromBlockFace);
+                BlockState blockState = blockItem.getBlock().defaultBlockState();
+                if (blockState.canSurvive(level, placementBlockPos)) {
+
+                    // Avoid placing saplings while inside the same block as them to prevent suffocation
+                    if (!blockState.is(BlockTags.SAPLINGS) || mob.distanceToSqr(placementBlockPos.getCenter()) >= 1.44f) {
+                        return Optional.of(new BlockPlacementTarget(markerBlockPos, placeFromBlockFace, false));
+                    }
+                }
+            }
+            return Optional.empty();
         }
     }
 }
